@@ -1,7 +1,7 @@
 # JSCDemo
 ios与js交互demo
 ### 认识JavaScriptCore.framework
-githubDemo:https://github.com/wangjinshan/JavascriptCoreStudy
+简书地址:http://www.jianshu.com/p/c7a7c2211be7
 ####  项目演示
 
 ![11.gif](http://upload-images.jianshu.io/upload_images/2845360-ac2e6d5ac71ece40.gif?imageMogr2/auto-orient/strip)
@@ -305,5 +305,5 @@ _jsContext[@"getCode"] = ^ (){
 这个  weakSelf 的处理就ok
 ```
 
-githubDemo:https://github.com/wangjinshan/JavascriptCoreStudy
+简书地址:http://www.jianshu.com/p/c7a7c2211be7
 <hr>
