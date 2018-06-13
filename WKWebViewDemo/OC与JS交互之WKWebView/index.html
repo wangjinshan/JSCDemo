@@ -3,6 +3,9 @@
     <head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>小黄</title>
+        
+        <a href="#https://v.qq.com/x/cover/7casb7nes159mrl.html?ptag=baidu.video.paymovie&frp=v.baidu.com%2Fmovie_intro%2F&vfm=bdvtx" target="_blank">超链接标签 </a>
+        
  		<style>
             *{
                 font-size: 50px;
@@ -32,9 +35,10 @@
                 document.getElementById('name').innerHTML = '你好 ' + msg + ', 我也很高兴见到你'
         	}
 
-        	function alertSendMsg(num,msg) {
-        		//window.alert('这是我的手机号:' + num + ',' + msg + '!!')
+        	function alertSendMsg(num,msg)
+            {
                 document.getElementById('msg').innerHTML = '这是我的手机号:' + num + ',' + msg + '!!'
+                return {'ket':{'key':'wwwww'}}
             }
         
             //JS响应方法列表
@@ -49,6 +53,7 @@
                 var obj = new Object();
                 obj.name = 'lyl';
                 window.webkit.messageHandlers.showName.postMessage(obj)
+                alert('1111111111111')
             }
 
             function btnClick3()

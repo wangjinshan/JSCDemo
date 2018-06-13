@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import <WebKit/WebKit.h>
 
+#import "IJSTestController.h"
+
 @interface ViewController () <WKScriptMessageHandler,WKUIDelegate,WKNavigationDelegate,WKScriptMessageHandler>
 
 @property(nonatomic,strong) WKWebView *wkwebV;  // 参数说明
@@ -37,7 +39,7 @@
     //设置处理代理并且注册要被js调用的方法名称
     [userController addScriptMessageHandler:self name:@"ijs"];
     //js注入，注入一个测试方法。
-    NSString *javaScriptSource = @"function userFunc(){window.webkit.messageHandlers.name.postMessage(['13300001111', '{ww:我是,ee:方法无法}'])}";
+    NSString *javaScriptSource =@"function userFunc(){alert('警告的窗口')}";
     WKUserScript *userScript = [[WKUserScript alloc] initWithSource:javaScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
     // forMainFrameOnly:NO(全局窗口)，yes（只限主窗口）
     [userController addUserScript:userScript];
@@ -58,13 +60,48 @@
 //    [self.wkwebV loadRequest:request];
     
     //JS调用OC 添加处理脚本
-//    [userController addScriptMessageHandler:self name:@"call"];
+    [userController addScriptMessageHandler:self name:@"name"];
     [userController addScriptMessageHandler:self name:@"showName"];
-//    [userController addScriptMessageHandler:self name:@"showSendMsg"];
-  
-    [self.wkwebV addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+    [userController addScriptMessageHandler:self name:@"showSendMsg"];
+  [userController addScriptMessageHandler:self name:@"userFunc"];
     
+//    [self.wkwebV addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        IJSTestController *vc =[IJSTestController new];
+        [self presentViewController:vc animated:YES completion:nil];
+    });
+//    WKSnapshotConfiguration *snap =[[WKSnapshotConfiguration alloc]init];
+//    snap.rect = CGRectMake(100, 100, 100, 100);
+//    [self.wkwebV takeSnapshotWithConfiguration:snap completionHandler:^(UIImage * _Nullable snapshotImage, NSError * _Nullable error) {
+//        UIImageView *imageV = [[UIImageView alloc]initWithFrame:CGRectMake(50, 50, 300, 300)];
+//        imageV.image = snapshotImage;
+//        [self.wkwebV addSubview:imageV];
+//    }];
+//
 }
+
+- (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+{
+    WKFrameInfo *frameInfo = navigationAction.targetFrame;
+    if (![frameInfo isMainFrame])
+    {
+        [webView loadRequest:navigationAction.request];
+    }
+    return nil;
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        completionHandler();
+    }];
+    // alert弹出框
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:message message:nil preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addAction:alertAction];
+    [self presentViewController:alertController animated:YES completion:nil];
+}
+
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
 {
     NSLog(@"---------------%@",self.wkwebV.title);
@@ -79,7 +116,7 @@
     {
         if (sender.tag == 123)
         {
-            [self.wkwebV evaluateJavaScript:@"alertMobile()" completionHandler:^(id _Nullable response, NSError * _Nullable error) {
+            [self.wkwebV evaluateJavaScript:@"userFunc()" completionHandler:^(id _Nullable response, NSError * _Nullable error) {
 
             }];
 //            [self.wkwebV evaluateJavaScript:@"ocTest" completionHandler:^(id _Nullable resp, NSError * _Nullable error) {
@@ -95,7 +132,16 @@
         
         if (sender.tag == 345)
         {
-            [self.wkwebV evaluateJavaScript:@"alertSendMsg('18870707070','只能传字符串')" completionHandler:nil];
+            [self.wkwebV evaluateJavaScript:@"alertSendMsg('18870707070','只能传字符串')" completionHandler:^(id _Nullable resp, NSError * _Nullable error) {
+                if (error)
+                {
+                    NSLog(@"---error----%@",error);
+                }
+                else
+                {
+                    NSLog(@"%@",resp);
+                }
+            }];
         }
     } else {
         NSLog(@"the view is currently loading content");
@@ -124,7 +170,7 @@
     {
         NSArray *array = message.body;
         NSString *info = [NSString stringWithFormat:@"这是我的手机号: %@, %@ !!",array.firstObject,array.lastObject];
-        [self showMsg:info];
+//        [self showMsg:info];
     }
 }
 
@@ -157,25 +203,30 @@
  
  */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-(void)dealloc
+{
+    NSLog(@"------------");
+}
 
 @end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

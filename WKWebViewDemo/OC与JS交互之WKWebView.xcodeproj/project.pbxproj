@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		74222BAC20D00D990049ACF2 /* IJSTestObjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 74222BAB20D00D990049ACF2 /* IJSTestObjc.m */; };
+		74222BB220D0AB860049ACF2 /* IJSTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 74222BB020D0AB860049ACF2 /* IJSTestController.m */; };
+		74222BB320D0AB860049ACF2 /* IJSTestController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 74222BB120D0AB860049ACF2 /* IJSTestController.xib */; };
+		74301AF720D10E13008EF5C3 /* TouchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 74301AF520D10E13008EF5C3 /* TouchController.m */; };
+		74301AF820D10E13008EF5C3 /* TouchController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 74301AF620D10E13008EF5C3 /* TouchController.xib */; };
 		7443556D20CE7FFB00D8B45A /* SMSDK.js in Resources */ = {isa = PBXBuildFile; fileRef = 7443556C20CE7FFA00D8B45A /* SMSDK.js */; };
 		CE9947121D65C79800F38608 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CE9947111D65C79800F38608 /* main.m */; };
 		CE9947151D65C79800F38608 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CE9947141D65C79800F38608 /* AppDelegate.m */; };
@@ -18,6 +23,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		74222BAA20D00D990049ACF2 /* IJSTestObjc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IJSTestObjc.h; sourceTree = "<group>"; };
+		74222BAB20D00D990049ACF2 /* IJSTestObjc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IJSTestObjc.m; sourceTree = "<group>"; };
+		74222BAF20D0AB860049ACF2 /* IJSTestController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IJSTestController.h; sourceTree = "<group>"; };
+		74222BB020D0AB860049ACF2 /* IJSTestController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IJSTestController.m; sourceTree = "<group>"; };
+		74222BB120D0AB860049ACF2 /* IJSTestController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IJSTestController.xib; sourceTree = "<group>"; };
+		74301AF420D10E13008EF5C3 /* TouchController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TouchController.h; sourceTree = "<group>"; };
+		74301AF520D10E13008EF5C3 /* TouchController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TouchController.m; sourceTree = "<group>"; };
+		74301AF620D10E13008EF5C3 /* TouchController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TouchController.xib; sourceTree = "<group>"; };
 		7443556C20CE7FFA00D8B45A /* SMSDK.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SMSDK.js; sourceTree = "<group>"; };
 		CE99470D1D65C79800F38608 /* OC与JS交互之WKWebView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "OC与JS交互之WKWebView.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE9947111D65C79800F38608 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -68,6 +81,14 @@
 				CE9947141D65C79800F38608 /* AppDelegate.m */,
 				CE9947161D65C79800F38608 /* ViewController.h */,
 				CE9947171D65C79800F38608 /* ViewController.m */,
+				74222BAF20D0AB860049ACF2 /* IJSTestController.h */,
+				74222BB020D0AB860049ACF2 /* IJSTestController.m */,
+				74222BB120D0AB860049ACF2 /* IJSTestController.xib */,
+				74301AF420D10E13008EF5C3 /* TouchController.h */,
+				74301AF520D10E13008EF5C3 /* TouchController.m */,
+				74301AF620D10E13008EF5C3 /* TouchController.xib */,
+				74222BAA20D00D990049ACF2 /* IJSTestObjc.h */,
+				74222BAB20D00D990049ACF2 /* IJSTestObjc.m */,
 				CE9947191D65C79800F38608 /* Main.storyboard */,
 				CE99471C1D65C79800F38608 /* Assets.xcassets */,
 				CE99471E1D65C79800F38608 /* LaunchScreen.storyboard */,
@@ -116,6 +137,7 @@
 				TargetAttributes = {
 					CE99470C1D65C79800F38608 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = 7V3U9AVLEY;
 					};
 				};
 			};
@@ -143,10 +165,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE9947201D65C79800F38608 /* LaunchScreen.storyboard in Resources */,
+				74222BB320D0AB860049ACF2 /* IJSTestController.xib in Resources */,
 				7443556D20CE7FFB00D8B45A /* SMSDK.js in Resources */,
 				CE9947281D66B5FF00F38608 /* index.html in Resources */,
 				CE99471D1D65C79800F38608 /* Assets.xcassets in Resources */,
 				CE99471B1D65C79800F38608 /* Main.storyboard in Resources */,
+				74301AF820D10E13008EF5C3 /* TouchController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,7 +182,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE9947181D65C79800F38608 /* ViewController.m in Sources */,
+				74301AF720D10E13008EF5C3 /* TouchController.m in Sources */,
 				CE9947151D65C79800F38608 /* AppDelegate.m in Sources */,
+				74222BB220D0AB860049ACF2 /* IJSTestController.m in Sources */,
+				74222BAC20D00D990049ACF2 /* IJSTestObjc.m in Sources */,
 				CE9947121D65C79800F38608 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -222,7 +249,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -260,7 +287,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -271,6 +298,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 7V3U9AVLEY;
 				INFOPLIST_FILE = "OC与JS交互之WKWebView/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -283,6 +311,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 7V3U9AVLEY;
 				INFOPLIST_FILE = "OC与JS交互之WKWebView/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
