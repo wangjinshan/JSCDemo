@@ -3,14 +3,12 @@
     <head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>小黄</title>
-        
         <a href="#https://v.qq.com/x/cover/7casb7nes159mrl.html?ptag=baidu.video.paymovie&frp=v.baidu.com%2Fmovie_intro%2F&vfm=bdvtx" target="_blank">超链接标签 </a>
-        
- 		<style>
+ 		
+        <style>
             *{
                 font-size: 50px;
             }
-        
             .btn{height:80px; width:80%; padding: 0px 30px; background-color: #0071E7; border: solid 1px #0071E7; border-radius:5px; font-size: 1em; color: white}
  		</style>
         
@@ -27,6 +25,7 @@
                 //这里已经调用过来了 但是搞不明白为什么alert方法没有响应
         		//alert('我是上面的小黄 手机号是:13300001111')
                 document.getElementById('mobile').innerHTML = '我是上面的小黄 手机号是:13300001111'
+                return 199999999999999
         	}
 
         	function alertName(msg)
@@ -37,14 +36,14 @@
 
         	function alertSendMsg(num,msg)
             {
-                document.getElementById('msg').innerHTML = '这是我的手机号:' + num + ',' + msg + '!!'
+                var objc = new num();
+                document.getElementById('msg').innerHTML = '这是我的手机号:' + objc.key + ',' + msg + '!!'
                 return {'ket':{'key':'wwwww'}}
             }
         
             //JS响应方法列表
             function btnClick1()
             {
-<!--                window.webkit.messageHandlers.showMobile.postMessage(null)-->
                 window.webkit.messageHandlers.ijs.postMessage(null)
             }
 
@@ -58,7 +57,6 @@
 
             function btnClick3()
             {
-                
                 window.webkit.messageHandlers.showSendMsg.postMessage(['13300001111', '{ww:我是,ee:方法无法}'])
             }
 

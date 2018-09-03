@@ -29,11 +29,31 @@
 }
 
 
+#pragma mark - WKScriptMessageHandler
+
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    NSLog(@"-----1-------%@",NSStringFromSelector(_cmd));
-    NSLog(@"----2-----%@",[message.body class]);
+    if ([message.name isEqualToString:@"showMobile"])
+    {
+        [self showMsg:@"我是下面的小红 手机号是:18870707070"];
+    }
+    if ([message.name isEqualToString:@"showName"])
+    {
+        NSString *info = [NSString stringWithFormat:@"你好 %@, 很高兴见到你",message.body];
+        [self showMsg:info];
+    }
     
+    if ([message.name isEqualToString:@"showSendMsg"])
+    {
+        NSArray *array = message.body;
+        NSString *info = [NSString stringWithFormat:@"这是我的手机号: %@, %@ !!",array.firstObject,array.lastObject];
+        [self showMsg:info];
+    }
+}
+
+- (void)showMsg:(NSString *)msg
+{
+    [[[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
 }
 
 

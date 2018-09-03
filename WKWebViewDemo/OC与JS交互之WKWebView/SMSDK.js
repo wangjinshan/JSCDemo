@@ -44,11 +44,14 @@ function SMSDK()
         document.body.appendChild(p3);
     }
     
-    function ocTest(num,msg)
+    this.ocTest =  function ocTest(num,msg)
     {
         document.getElementById('msg').innerHTML = '这是我的手机号:' + num + ',' + msg + '!!'
+        var obj = new Object();
+        obj.name = '叫我山神'
+        obj.qq = '1096452045'
+        return obj
     }
-    
 }
 var $smsdk = new SMSDK();
 

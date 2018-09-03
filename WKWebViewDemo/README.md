@@ -1,5 +1,8 @@
 # WebKit 认知
 
+之前学习交互,把WK落下了,现在补上.
+WK中有些类,在目前的项目中没有用到,可能存在问题,本文也没加注释,后面会补上,这个文章属于WebKit的入门文档,如果有小伙伴只想知道怎么交互,前面的基础知识可以直接忽略,如果觉得文章中有错误还望指出 **QQ: 1096452045**
+
 ### 一,核心类  WKWebView
 
 #### 1,属性:
@@ -575,4 +578,112 @@ NSString *title; // 网页的标题
 <hr>
 
 ### 三, 基于WKWebView的ios与js交互细节
+
+如果之前看过我写的基于 UIWebview和 JavaScriptCore ios与js的交互的话下面的内容将非常好理解
+
+#### 1, ios调用js代码
+ios调用js代码其实非常简单,只有一句代码
+
+```
+- (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler;
+第一个参数是你需要执行的js方法,参数义字符的形式拼接进去,这里面的数据转换类型和之前文档中的数据转换类型一样,请参考之前的例子
+```
+实战如下:
+调用js中的代码:
+
+```
+js中的代码:
+function alertSendMsg(num,msg)
+{
+    var objc = new num(); 
+    document.getElementById('msg').innerHTML = '这是我的手机号:' + objc.key + ',' + msg + '!!'
+    return {'ket':{'key':'wwwww'}}
+ }
+ 
+function SMSDK()
+{
+   this.ocTest =  function ocTest(num,msg)
+    {
+        document.getElementById('msg').innerHTML = '这是我的手机号:' + num + ',' + msg + '!!'
+        var obj = new Object();
+        obj.name = '叫我山神'
+        obj.qq = '1096452045'
+        return obj
+    }
+}
+var $smsdk = new SMSDK();
+
+ios中的调用代码
+
+$smsdk.ocTest('18870707070','只能传字符串')   // @"alertSendMsg('18870707070','只能传字符串')"
+[self.wkwebV evaluateJavaScript:@"$smsdk.ocTest({key:111},[2000,2001])" completionHandler:^(id _Nullable resp, NSError * _Nullable error) {
+    if (error)
+    {
+        NSLog(@"---error----%@",error);
+    }
+    else
+    {
+    NSLog(@"--------resp-------%@",resp);
+    }
+}];
+上面的代码一目了然,第一个参数就是js的方法,主要说说参数回调
+resp参数是js返回来的对象,中间的数据转换和上文说的一样
+```
+#### 2, js调用ios
+
+也非常简单只有一行代码
+
+```
+- (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name;
+这个参数是接受回调的代理对象,这个位置不能是控制器的self,可以选自己创建的类,
+第二个参数就是js中的方法名字
+```
+例子:
+1, 自己注入js代码(如果自己不注入js代码这一步直接忽略)
+
+```
+NSString *javaScriptSource =@"function userFunc(){alert('警告的窗口')}";
+WKUserScript *userScript = [[WKUserScript alloc] initWithSource:javaScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
+[userController addUserScript:userScript];
+```
+2, 注册js中的方法名字
+
+```
+[userController addScriptMessageHandler:self.objc name:@"showSendMsg"];
+[userController addScriptMessageHandler:self.objc name:@"userFunc"];  // 自己注册的方法
+```
+2.1, js中的代码如下
+
+```
+ function btnClick3()
+{            
+    window.webkit.messageHandlers.showSendMsg.postMessage(['13300001111', '{ww:我是,ee:方法无法}'])
+}
+showSendMsg 这个就是你 ios代码注册的js的方法
+postMessage(a,b) 这个方法接受两个参数,传递参数的规则还是之前说的, 数据类型js和ios有一个对照表,你可以参考之前的文档
+```
+2.2 ,上面注册代码的时候,第一个参数传了一个遵守代理回调协议的对象,没错回调的数据就是去这个方法获取
+
+```
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    if ([message.name isEqualToString:@"showSendMsg"])
+    {
+        NSArray *array = message.body;
+        NSString *info = [NSString stringWithFormat:@"这是我的手机号: %@, %@ !!",array.firstObject,array.lastObject];
+     NSLog(info);
+    }
+}
+只有js那边调用方法,发送数据就会走这个方法,ios就可以做响应的处理
+```
+
+实际项目的例子:
+挖联网APP的js交互,我们约定html所有的需要交互的接口统一调用Call方法,唯一区别就是传递的参数是一个对象,我们在ios会解析成字典,字典中包含了 ClassName 这样的字段,我们根据这个字段动态创建一个类去处理这个js交互的数据
+
+至此我们所有的交互就搞定了,是不是觉得非常的简单呢!
+
+之前的文档:
+https://www.jianshu.com/p/c7a7c2211be7
+本文档Demo
+https://github.com/wangjinshan/JSCDemo
 

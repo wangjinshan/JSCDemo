@@ -10,10 +10,12 @@
 #import <WebKit/WebKit.h>
 
 #import "IJSTestController.h"
+#import "IJSTestObjc.h"
 
-@interface ViewController () <WKScriptMessageHandler,WKUIDelegate,WKNavigationDelegate,WKScriptMessageHandler>
+@interface ViewController () <WKUIDelegate,WKNavigationDelegate>
 
 @property(nonatomic,strong) WKWebView *wkwebV;  // 参数说明
+@property(nonatomic,strong) IJSTestObjc *objc;  // 参数说明
 @end
 
 @implementation ViewController
@@ -21,7 +23,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
- 
+    self.objc = [IJSTestObjc new];
     // 进程池配置
     WKWebViewConfiguration  * config = [[WKWebViewConfiguration alloc]init];
     // WKProcessPool类中没有暴露任何属性和方法，配置为同一个进程池的WebView会共享数据，例如Cookie、用户凭证等，开发者可以通过编写管理类来分配不同维度的WebView在不同进程池中。
@@ -37,7 +39,7 @@
     //设置内容交互控制器 用于处理JavaScript与native交互
     WKUserContentController * userController = config.userContentController;
     //设置处理代理并且注册要被js调用的方法名称
-    [userController addScriptMessageHandler:self name:@"ijs"];
+    [userController addScriptMessageHandler:self.objc name:@"ijs"];
     //js注入，注入一个测试方法。
     NSString *javaScriptSource =@"function userFunc(){alert('警告的窗口')}";
     WKUserScript *userScript = [[WKUserScript alloc] initWithSource:javaScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
@@ -54,23 +56,27 @@
 //    NSString *filePath = @"http://xcqbtest.xcqb.cn/#/qa"; //[[NSBundle mainBundle] pathForResource:@"index" ofType:@"html"];
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"index" ofType:@"html"];
     NSURL *baseURL = [[NSBundle mainBundle] bundleURL];
-    [self.wkwebV loadHTMLString:[NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil] baseURL:baseURL];
+//    [self.wkwebV loadHTMLString:[NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil] baseURL:baseURL];
 //    [self.wkwebV loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:filePath]]];
 //    NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:filePath]];//[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.xinhuanet.com/politics/2018-05/09/c_1122808419.htm"]];
 //    [self.wkwebV loadRequest:request];
     
+    // 加载本地的html
+    NSString *html =[NSString stringWithFormat:@"%@%@",[self _getHtml],[self _getCssString]];
+    [self.wkwebV loadHTMLString:html baseURL:nil];
+    
     //JS调用OC 添加处理脚本
-    [userController addScriptMessageHandler:self name:@"name"];
-    [userController addScriptMessageHandler:self name:@"showName"];
-    [userController addScriptMessageHandler:self name:@"showSendMsg"];
-  [userController addScriptMessageHandler:self name:@"userFunc"];
+    [userController addScriptMessageHandler:self.objc name:@"name"];
+    [userController addScriptMessageHandler:self.objc name:@"showName"];
+    [userController addScriptMessageHandler:self.objc name:@"showSendMsg"];
+  [userController addScriptMessageHandler:self.objc name:@"userFunc"];  // 自己注册的方法
     
 //    [self.wkwebV addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        IJSTestController *vc =[IJSTestController new];
-        [self presentViewController:vc animated:YES completion:nil];
-    });
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        IJSTestController *vc =[IJSTestController new];
+//        [self presentViewController:vc animated:YES completion:nil];
+//    });
 //    WKSnapshotConfiguration *snap =[[WKSnapshotConfiguration alloc]init];
 //    snap.rect = CGRectMake(100, 100, 100, 100);
 //    [self.wkwebV takeSnapshotWithConfiguration:snap completionHandler:^(UIImage * _Nullable snapshotImage, NSError * _Nullable error) {
@@ -116,13 +122,14 @@
     {
         if (sender.tag == 123)
         {
-            [self.wkwebV evaluateJavaScript:@"userFunc()" completionHandler:^(id _Nullable response, NSError * _Nullable error) {
-
+            [self.wkwebV evaluateJavaScript:@"alertMobile()" completionHandler:^(id _Nullable response, NSError * _Nullable error) {
+                NSLog(@"---alertMobile----%@",response);
             }];
-//            [self.wkwebV evaluateJavaScript:@"ocTest" completionHandler:^(id _Nullable resp, NSError * _Nullable error) {
-//
-//                NSLog(@"%@",err)
-//            }];
+            
+            [self.wkwebV evaluateJavaScript:@"userFunc()" completionHandler:^(id _Nullable resp, NSError * _Nullable error) {
+
+                
+            }];
         }
 
         if (sender.tag == 234)
@@ -132,14 +139,16 @@
         
         if (sender.tag == 345)
         {
-            [self.wkwebV evaluateJavaScript:@"alertSendMsg('18870707070','只能传字符串')" completionHandler:^(id _Nullable resp, NSError * _Nullable error) {
+
+//            $smsdk.ocTest('18870707070','只能传字符串')   // @"alertSendMsg('18870707070','只能传字符串')"
+            [self.wkwebV evaluateJavaScript:@"$smsdk.ocTest({key:111},[2000,2001])" completionHandler:^(id _Nullable resp, NSError * _Nullable error) {
                 if (error)
                 {
                     NSLog(@"---error----%@",error);
                 }
                 else
                 {
-                    NSLog(@"%@",resp);
+                    NSLog(@"--------resp-------%@",resp);
                 }
             }];
         }
@@ -148,36 +157,6 @@
     }
 }
 
-#pragma mark - WKScriptMessageHandler
-
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
-{
-    NSLog(@"-----1-------%@",NSStringFromSelector(_cmd));
-    NSLog(@"----2-----%@",[message.body class]);
-
-    if ([message.name isEqualToString:@"showMobile"])
-    {
-        [self showMsg:@"我是下面的小红 手机号是:18870707070"];
-    }
-    
-    if ([message.name isEqualToString:@"showName"])
-    {
-        NSString *info = [NSString stringWithFormat:@"你好 %@, 很高兴见到你",message.body];
-        [self showMsg:info];
-    }
-    
-    if ([message.name isEqualToString:@"showSendMsg"])
-    {
-        NSArray *array = message.body;
-        NSString *info = [NSString stringWithFormat:@"这是我的手机号: %@, %@ !!",array.firstObject,array.lastObject];
-//        [self showMsg:info];
-    }
-}
-
-- (void)showMsg:(NSString *)msg
-{
-    [[[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
-}
 
 - (IBAction)clear:(id)sender
 {
@@ -202,6 +181,27 @@
  
  
  */
+
+-(NSString *)_getCssString
+{
+//    return @"<style>*{font-size: 50px;}.btn{height:80px; width:80%; padding: 0px 30px; background-color: #0071E7; border: solid 1px #0071E7; border-radius:5px; font-size: 1em; color: white}</style>";
+    
+//    return @"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1\"><style>body{margin:0; font-family: \"STHeiti\", \"Microsoft YaHei\", Helvetica, Arial, sans-serif !important;}h1,h2,h3,h4,h5,h6,p,strong,ul,a{text-decoration: none;margin:10px 0px 10px 0px;color:#232426;font-size:21px;line-height: 1.8;text-align:justify}img{height:auto!important;max-width:100%!important}ul{margin-left:20px;list-style:initial}ul li{line-height: 1.8}div{color:#232426;font-size:21px;line-height: 1.8}.f1,.f2,.f3,.f3 span{display:block;font-size:21px;line-height: 1.8;color:#232426}.f1,.f2,.f3,.f3 img{width:20px}</style>";
+    
+    //return @"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1\"><style>body{margin:0; font-family: \"STHeiti\", \"Microsoft YaHei\", Helvetica, Arial, sans-serif !important;}h1,h2,h3,h4,h5,h6,p,strong,ul,a{text-decoration: none;margin:10px 0px 10px 0px;color:#232426;font-size:19px;line-height:1.8;text-align:justify}img{height:auto!important;max-width:100%!important}ul{margin-left:28px;list-style:initial}ul li{line-height: 1.8}div{color:#232426;font-size:19px;line-height:1.8}.f1,.f2,.f3,.f3 span{display:block;font-size:19px;line-height: 1.8;color:#232426}.f1,.f2,.f3,.f3 img{width:28px}</style>";
+    
+    return @"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1\"><style>body{margin:0; font-family: \"STHeiti\", \"Microsoft YaHei\", Helvetica, Arial, sans-serif !important;}h1,h2,h3,h4,h5,h6,p,strong,ul,a{text-decoration: none;margin:10px 0px 10px 0px;color:#232426;font-size:15px;line-height:1.8;text-align:justify}img{height:auto!important;max-width:100%!important}ul{margin-left:20px;list-style:initial}ul li{line-height:1.8}div{color:#232426;font-size:15px;line-height:1.8}.f1,.f2,.f3,.f3 span{display:block;font-size:15px;line-height:1.8;color:#232426}.f1,.f2,.f3,.f3 img{width:20px}</style>";
+    
+}
+
+-(NSString *)_getHtml
+{
+    
+    return @"<p>这个是P标签的测试</p><div id='wl-anchor-div'>这个是啥</div>";
+    
+ return @"<div><label>本地测试的html：13300001111</label></div><br/><div id=\"mobile\"></div><div><button class=\"btn\" type=\"button\" onclick=\"btnClick1()\">小红的手机号</button></div><br/><div id=\"name\"></div><div><button class=\"btn\" type=\"button\" onclick=\"btnClick2()\">打电话给小红</button></div><br/><div id=\"msg\"></div><div><button class=\"btn\" type=\"button\" onclick=\"btnClick3()\">发短信给小红</button></div>";
+}
+
 
 -(void)dealloc
 {
